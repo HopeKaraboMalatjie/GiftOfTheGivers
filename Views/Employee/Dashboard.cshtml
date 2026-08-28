@@ -1,0 +1,53 @@
+@model List<ReliefProject>
+@{
+    ViewData["Title"] = "Employee Dashboard";
+    var signups = ViewBag.VolunteerSignups as List<VolunteerSignup>;
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title mb-0">Employee Dashboard</h2>
+        <a class="btn btn-gotg-primary" asp-controller="Employee" asp-action="CreateProject">+ Post Project Update</a>
+    </div>
+
+    <h4>Relief Projects</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr><th>Title</th><th>Location</th><th>Status</th><th>Started</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Title</td>
+                    <td>@p.Location</td>
+                    <td><span class="badge bg-success">@p.Status</span></td>
+                    <td>@p.StartDate.ToString("dd MMM yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4 class="mt-5">Recent Volunteer Sign-ups</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr><th>Name</th><th>Email</th><th>Skills</th><th>Availability</th><th>Project</th><th>Submitted</th></tr>
+        </thead>
+        <tbody>
+            @if (signups != null)
+            {
+                @foreach (var v in signups)
+                {
+                    <tr>
+                        <td>@v.FullName</td>
+                        <td>@v.Email</td>
+                        <td>@v.Skills</td>
+                        <td>@v.Availability</td>
+                        <td>@(v.ReliefProject?.Title ?? "No preference")</td>
+                        <td>@v.SubmittedOn.ToString("dd MMM yyyy HH:mm")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

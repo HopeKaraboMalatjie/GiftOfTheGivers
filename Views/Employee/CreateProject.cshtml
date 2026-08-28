@@ -1,0 +1,39 @@
+@model ReliefProject
+@{
+    ViewData["Title"] = "Post Project Update";
+}
+
+<div class="container py-5" style="max-width:600px;">
+    <h2 class="section-title mb-4">Post a Relief Project Update</h2>
+
+    <form asp-controller="Employee" asp-action="CreateProject" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label">Location</label>
+            <input asp-for="Location" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Status" class="form-label">Status</label>
+            <select asp-for="Status" class="form-select">
+                <option value="Active">Active</option>
+                <option value="Completed">Completed</option>
+                <option value="Suspended">Suspended</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-gotg-primary w-100">Publish</button>
+    </form>
+</div>

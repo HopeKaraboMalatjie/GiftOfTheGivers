@@ -1,0 +1,93 @@
+:root {
+  --gotg-red: #8c1d1d;
+  --gotg-red-dark: #5e1212;
+  --gotg-gold: #d4a017;
+  --gotg-cream: #fdf8f0;
+}
+
+body {
+  background-color: var(--gotg-cream);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.gotg-navbar {
+  background: linear-gradient(135deg, var(--gotg-red) 0%, var(--gotg-red-dark) 100%);
+}
+
+.gotg-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gotg-gold);
+  color: var(--gotg-red-dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.gotg-hero {
+  background: linear-gradient(135deg, var(--gotg-red) 0%, var(--gotg-red-dark) 100%);
+  color: #fff;
+  padding: 4rem 0;
+}
+
+.gotg-hero h1 {
+  font-weight: 700;
+}
+
+.btn-gotg-primary {
+  background-color: var(--gotg-gold);
+  border-color: var(--gotg-gold);
+  color: #3a2a00;
+  font-weight: 600;
+}
+
+.btn-gotg-primary:hover {
+  background-color: #b8890f;
+  border-color: #b8890f;
+  color: #fff;
+}
+
+.card-project {
+  border: none;
+  border-left: 4px solid var(--gotg-gold);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  /* Make cards visually match the site's warm cream/gold theme */
+  background: linear-gradient(180deg, var(--gotg-cream) 0%, #fff 100%);
+  color: var(--gotg-red-dark);
+  /* soften card edges for a gentler look */
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.card-project .form-label {
+  color: var(--gotg-red-dark);
+  font-weight: 600;
+}
+
+.card-project .form-control {
+  background-color: transparent;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: none;
+}
+
+.card-project .form-control:focus {
+  border-color: var(--gotg-gold);
+  box-shadow: 0 0 0 0.2rem rgba(212,160,23,0.12);
+}
+
+.card-project .section-title {
+  color: var(--gotg-red-dark);
+}
+
+.gotg-footer {
+  background-color: var(--gotg-red-dark);
+  color: #f2e6d8;
+}
+
+.section-title {
+  color: var(--gotg-red-dark);
+  font-weight: 700;
+}

@@ -1,0 +1,36 @@
+@model List<ReliefProject>
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="gotg-hero">
+    <div class="container text-center">
+        <h1 class="display-5">Gift of the Givers Foundation</h1>
+        <p class="lead">A beacon of hope in times of crisis &mdash; coordinating relief, volunteers, and donations.</p>
+        <a class="btn btn-gotg-primary btn-lg me-2" asp-controller="Donation" asp-action="Create">Donate Now</a>
+        <a class="btn btn-outline-light btn-lg" asp-controller="Volunteer" asp-action="Create">Become a Volunteer</a>
+    </div>
+</section>
+
+<div class="container py-5">
+    <h2 class="section-title mb-4">Active Relief Projects</h2>
+    <div class="row g-4">
+        @if (!Model.Any())
+        {
+            <p>No active projects at the moment. Please check back soon.</p>
+        }
+        @foreach (var project in Model)
+        {
+            <div class="col-md-6">
+                <div class="card card-project h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@project.Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@project.Location</h6>
+                        <p class="card-text">@project.Description</p>
+                        <span class="badge bg-success">@project.Status</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

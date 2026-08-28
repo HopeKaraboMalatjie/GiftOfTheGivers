@@ -1,0 +1,16 @@
+@model Donation
+@{
+    ViewData["Title"] = "Thank You";
+}
+
+<div class="container py-5 text-center" style="max-width:600px;">
+    <h2 class="section-title">Thank You for Your Donation!</h2>
+    <p class="lead">Your contribution of <strong>@Model.Amount.ToString("N2") @Model.Currency</strong> has been recorded.</p>
+    <p>A placeholder tax certificate has been generated for your records.</p>
+    <a class="btn btn-gotg-primary btn-lg mt-3" asp-controller="Donation" asp-action="CertificatePdf" asp-route-id="@Model.DonationId">
+        Download Certificate (PDF)
+    </a>
+    <div class="mt-4">
+        <a asp-controller="Home" asp-action="Index">Back to Home</a>
+    </div>
+</div>

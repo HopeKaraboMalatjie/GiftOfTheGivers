@@ -1,0 +1,63 @@
+@model VolunteerSignup
+@{
+    ViewData["Title"] = "Volunteer";
+    var projects = ViewBag.Projects as List<ReliefProject>;
+}
+
+<div class="container py-5" style="max-width:600px;">
+    <h2 class="section-title mb-4">Register as a Volunteer</h2>
+
+    <form asp-controller="Volunteer" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="FullName" class="form-label">Full Name</label>
+            <input asp-for="FullName" class="form-control" required />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" required />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Phone" class="form-label">Phone (optional)</label>
+            <input asp-for="Phone" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Skills" class="form-label">Skills / Experience</label>
+            <textarea asp-for="Skills" class="form-control" rows="3" placeholder="e.g. First aid, logistics, driving, translation"></textarea>
+            <span asp-validation-for="Skills" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Availability" class="form-label">Availability</label>
+            <select asp-for="Availability" class="form-select">
+                <option value="Weekdays">Weekdays</option>
+                <option value="Weekends">Weekends</option>
+                <option value="Full-time">Full-time</option>
+                <option value="On-call / Emergency only">On-call / Emergency only</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ReliefProjectId" class="form-label">Preferred project (optional)</label>
+            <select asp-for="ReliefProjectId" class="form-select">
+                <option value="">No preference</option>
+                @if (projects != null)
+                {
+                    foreach (var p in projects)
+                    {
+                        <option value="@p.ReliefProjectId">@p.Title</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-gotg-primary w-100">Submit</button>
+    </form>
+</div>
