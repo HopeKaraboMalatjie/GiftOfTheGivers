@@ -10,6 +10,11 @@
         <a class="btn btn-gotg-primary" asp-controller="Employee" asp-action="CreateProject">+ Post Project Update</a>
     </div>
 
+    @if (ViewBag.TotalRaised != null)
+    {
+        <div class="mb-3 text-muted">Total raised to date: <strong>@string.Format("{0:N2}", (decimal)ViewBag.TotalRaised)</strong></div>
+    }
+
     <h4>Relief Projects</h4>
     <table class="table table-striped">
         <thead>

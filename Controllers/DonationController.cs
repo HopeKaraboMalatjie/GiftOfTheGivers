@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
+using GiftOfTheGivers.Helpers;
 
 namespace GiftOfTheGivers.Controllers
 {
@@ -102,7 +103,16 @@ namespace GiftOfTheGivers.Controllers
                         col.Item().Text("This is a prototype-stage document. It is not a valid legal tax certificate.")
                             .Italic().FontColor(Colors.Grey.Darken1);
 
-                        col.Item().PaddingTop(15).Text($"Certificate Reference: GOTG-{donation.DonationId:D6}");
+                        var certRef = string.Empty;
+                        try
+                        {
+                            certRef = DonationHelpers.FormatTaxCertificateNumber(donation.DonationId, donation.DonatedOn);
+                        }
+                        catch
+                        {
+                            certRef = $"GOTG-{donation.DonationId:D6}";
+                        }
+                        col.Item().PaddingTop(15).Text($"Certificate Reference: {certRef}");
                         col.Item().Text($"Donor: {donorName}");
                         col.Item().Text($"Date: {donation.DonatedOn:dd MMMM yyyy}");
                         col.Item().Text($"Amount: {donation.Amount:N2} {donation.Currency}");

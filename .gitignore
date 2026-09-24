@@ -3,3 +3,5 @@ obj/
 .vs/
 *.user
 appsettings.Production.json
+local.settings.json
+.azurefunctions/

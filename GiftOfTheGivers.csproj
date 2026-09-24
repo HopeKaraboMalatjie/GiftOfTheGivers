@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GiftOfTheGivers.Helpers\GiftOfTheGivers.Helpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="GiftOfTheGivers.Tests\" />
   </ItemGroup>
 

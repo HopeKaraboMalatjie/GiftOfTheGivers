@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9864ba97-1313-47bc-944f-ba7d137e5123" name="Karabo Malatjie Jr@LAPTOP-MEKFQR51 2026-09-24 13:27:09" runUser="LAPTOP-MEKFQR51\Karabo Malatjie Jr" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-24T13:27:09.9649169+02:00" queuing="2026-09-24T13:27:09.9649174+02:00" start="2026-09-24T13:27:05.9021293+02:00" finish="2026-09-24T13:27:09.9690117+02:00" />
+  <TestSettings name="default" id="138d6d2c-a5c3-4ab7-b51c-0a0d7b1a8c01">
+    <Deployment runDeploymentRoot="Karabo_Malatjie_Jr_LAPTOP-MEKFQR51_2026-09-24_13_27_09" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6820a140-1c6c-463f-967b-1ef503b39592" testId="e68bcb77-5b38-b2d3-2877-5efab99ac0a5" testName="GiftOfTheGivers.Tests.DonationHelpersTests.CalculateAverageDonation_MultipleAmounts_ReturnsAverage" computerName="LAPTOP-MEKFQR51" duration="00:00:00.0012950" startTime="2026-09-24T13:27:09.9041789+02:00" endTime="2026-09-24T13:27:09.9041792+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6820a140-1c6c-463f-967b-1ef503b39592" />
+    <UnitTestResult executionId="395a9f68-9b2e-4764-8250-4ae70ada60d8" testId="6d92fbb8-af02-a83f-9b2e-24039476bf38" testName="GiftOfTheGivers.Tests.DonationHelpersTests.FormatTaxCertificateNumber_InvalidId_Throws" computerName="LAPTOP-MEKFQR51" duration="00:00:00.4961086" startTime="2026-09-24T13:27:09.8881853+02:00" endTime="2026-09-24T13:27:09.8881969+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="395a9f68-9b2e-4764-8250-4ae70ada60d8" />
+    <UnitTestResult executionId="7f723eb3-fecd-498f-8f26-906f1ad66a45" testId="5864ca15-0d9d-8511-fff8-fa8b1f3e7bbd" testName="GiftOfTheGivers.Tests.DonationHelpersTests.FormatTaxCertificateNumber_ValidInputs_ReturnsExpected" computerName="LAPTOP-MEKFQR51" duration="00:00:00.0006732" startTime="2026-09-24T13:27:09.8900397+02:00" endTime="2026-09-24T13:27:09.8900397+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f723eb3-fecd-498f-8f26-906f1ad66a45" />
+    <UnitTestResult executionId="caeaf25e-e45a-44d3-8c39-8edfe1b99f9c" testId="c4a60f29-db99-37f3-3aa9-0f66237e9a0c" testName="GiftOfTheGivers.Tests.DonationHelpersTests.CalculateDonationTotal_MultipleAmounts_SumsCorrectly" computerName="LAPTOP-MEKFQR51" duration="00:00:00.0000911" startTime="2026-09-24T13:27:09.9042212+02:00" endTime="2026-09-24T13:27:09.9042212+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="caeaf25e-e45a-44d3-8c39-8edfe1b99f9c" />
+    <UnitTestResult executionId="e1bae048-72ba-41f0-8eb1-ac838f515eaf" testId="c3388789-ffbd-3237-57db-2d82575eac01" testName="GiftOfTheGivers.Tests.DonationHelpersTests.CalculateDonationTotal_EmptyCollection_ReturnsZero" computerName="LAPTOP-MEKFQR51" duration="00:00:00.0141031" startTime="2026-09-24T13:27:09.9027021+02:00" endTime="2026-09-24T13:27:09.9027025+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1bae048-72ba-41f0-8eb1-ac838f515eaf" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="GiftOfTheGivers.Tests.DonationHelpersTests.CalculateAverageDonation_MultipleAmounts_ReturnsAverage" storage="c:\users\karabo malatjie jr\downloads\giftofthegiverspoe\giftofthegiverspoe\giftofthegivers\giftofthegivers.tests\bin\release\net8.0\giftofthegivers.tests.dll" id="e68bcb77-5b38-b2d3-2877-5efab99ac0a5">
+      <Execution id="6820a140-1c6c-463f-967b-1ef503b39592" />
+      <TestMethod codeBase="C:\Users\Karabo Malatjie Jr\Downloads\GiftOfTheGiversPOE\GiftOfTheGiversPOE\GiftOfTheGivers\GiftOfTheGivers.Tests\bin\Release\net8.0\GiftOfTheGivers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GiftOfTheGivers.Tests.DonationHelpersTests" name="CalculateAverageDonation_MultipleAmounts_ReturnsAverage" />
+    </UnitTest>
+    <UnitTest name="GiftOfTheGivers.Tests.DonationHelpersTests.CalculateDonationTotal_EmptyCollection_ReturnsZero" storage="c:\users\karabo malatjie jr\downloads\giftofthegiverspoe\giftofthegiverspoe\giftofthegivers\giftofthegivers.tests\bin\release\net8.0\giftofthegivers.tests.dll" id="c3388789-ffbd-3237-57db-2d82575eac01">
+      <Execution id="e1bae048-72ba-41f0-8eb1-ac838f515eaf" />
+      <TestMethod codeBase="C:\Users\Karabo Malatjie Jr\Downloads\GiftOfTheGiversPOE\GiftOfTheGiversPOE\GiftOfTheGivers\GiftOfTheGivers.Tests\bin\Release\net8.0\GiftOfTheGivers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GiftOfTheGivers.Tests.DonationHelpersTests" name="CalculateDonationTotal_EmptyCollection_ReturnsZero" />
+    </UnitTest>
+    <UnitTest name="GiftOfTheGivers.Tests.DonationHelpersTests.CalculateDonationTotal_MultipleAmounts_SumsCorrectly" storage="c:\users\karabo malatjie jr\downloads\giftofthegiverspoe\giftofthegiverspoe\giftofthegivers\giftofthegivers.tests\bin\release\net8.0\giftofthegivers.tests.dll" id="c4a60f29-db99-37f3-3aa9-0f66237e9a0c">
+      <Execution id="caeaf25e-e45a-44d3-8c39-8edfe1b99f9c" />
+      <TestMethod codeBase="C:\Users\Karabo Malatjie Jr\Downloads\GiftOfTheGiversPOE\GiftOfTheGiversPOE\GiftOfTheGivers\GiftOfTheGivers.Tests\bin\Release\net8.0\GiftOfTheGivers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GiftOfTheGivers.Tests.DonationHelpersTests" name="CalculateDonationTotal_MultipleAmounts_SumsCorrectly" />
+    </UnitTest>
+    <UnitTest name="GiftOfTheGivers.Tests.DonationHelpersTests.FormatTaxCertificateNumber_ValidInputs_ReturnsExpected" storage="c:\users\karabo malatjie jr\downloads\giftofthegiverspoe\giftofthegiverspoe\giftofthegivers\giftofthegivers.tests\bin\release\net8.0\giftofthegivers.tests.dll" id="5864ca15-0d9d-8511-fff8-fa8b1f3e7bbd">
+      <Execution id="7f723eb3-fecd-498f-8f26-906f1ad66a45" />
+      <TestMethod codeBase="C:\Users\Karabo Malatjie Jr\Downloads\GiftOfTheGiversPOE\GiftOfTheGiversPOE\GiftOfTheGivers\GiftOfTheGivers.Tests\bin\Release\net8.0\GiftOfTheGivers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GiftOfTheGivers.Tests.DonationHelpersTests" name="FormatTaxCertificateNumber_ValidInputs_ReturnsExpected" />
+    </UnitTest>
+    <UnitTest name="GiftOfTheGivers.Tests.DonationHelpersTests.FormatTaxCertificateNumber_InvalidId_Throws" storage="c:\users\karabo malatjie jr\downloads\giftofthegiverspoe\giftofthegiverspoe\giftofthegivers\giftofthegivers.tests\bin\release\net8.0\giftofthegivers.tests.dll" id="6d92fbb8-af02-a83f-9b2e-24039476bf38">
+      <Execution id="395a9f68-9b2e-4764-8250-4ae70ada60d8" />
+      <TestMethod codeBase="C:\Users\Karabo Malatjie Jr\Downloads\GiftOfTheGiversPOE\GiftOfTheGiversPOE\GiftOfTheGivers\GiftOfTheGivers.Tests\bin\Release\net8.0\GiftOfTheGivers.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GiftOfTheGivers.Tests.DonationHelpersTests" name="FormatTaxCertificateNumber_InvalidId_Throws" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e68bcb77-5b38-b2d3-2877-5efab99ac0a5" executionId="6820a140-1c6c-463f-967b-1ef503b39592" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6d92fbb8-af02-a83f-9b2e-24039476bf38" executionId="395a9f68-9b2e-4764-8250-4ae70ada60d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5864ca15-0d9d-8511-fff8-fa8b1f3e7bbd" executionId="7f723eb3-fecd-498f-8f26-906f1ad66a45" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4a60f29-db99-37f3-3aa9-0f66237e9a0c" executionId="caeaf25e-e45a-44d3-8c39-8edfe1b99f9c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c3388789-ffbd-3237-57db-2d82575eac01" executionId="e1bae048-72ba-41f0-8eb1-ac838f515eaf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.3.1+6b60a9e56a (64-bit .NET 8.0.31)&#xD;
+[xUnit.net 00:00:01.26]   Discovering: GiftOfTheGivers.Tests&#xD;
+[xUnit.net 00:00:01.34]   Discovered:  GiftOfTheGivers.Tests&#xD;
+[xUnit.net 00:00:01.34]   Starting:    GiftOfTheGivers.Tests&#xD;
+[xUnit.net 00:00:01.88]   Finished:    GiftOfTheGivers.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
