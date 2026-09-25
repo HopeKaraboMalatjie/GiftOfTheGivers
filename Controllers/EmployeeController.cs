@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using GiftOfTheGivers.Helpers;
 
 namespace GiftOfTheGivers.Controllers
 {
@@ -34,6 +35,11 @@ namespace GiftOfTheGivers.Controllers
                 .OrderByDescending(v => v.SubmittedOn)
                 .Take(20)
                 .ToListAsync();
+
+            // Calculate total raised from donations
+            var donationAmounts = await _db.Donations.Select(d => d.Amount).ToListAsync();
+            var totalRaised = DonationHelper.CalculateDonationTotal(donationAmounts);
+            ViewBag.TotalRaised = totalRaised;
 
             ViewBag.VolunteerSignups = volunteerSignups;
             return View(projects);
