@@ -3,3 +3,8 @@ obj/
 .vs/
 *.user
 appsettings.Production.json
+*.nupkg
+*.snupkg
+.azure-pipelines/
+GiftOfTheGivers.Functions/local.settings.json
+TestResults/

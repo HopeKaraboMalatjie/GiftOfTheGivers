@@ -1,5 +1,6 @@
 using GiftOfTheGivers.Data;
 using GiftOfTheGivers.Models;
+using GiftOfTheGivers.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace GiftOfTheGivers.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAzureFunctionClient _azureFunctionClient;
 
-        public EmployeeController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+        public EmployeeController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAzureFunctionClient azureFunctionClient)
         {
             _db = db;
             _userManager = userManager;
+            _azureFunctionClient = azureFunctionClient;
         }
 
         // GET: /Employee/Dashboard
@@ -52,6 +55,9 @@ namespace GiftOfTheGivers.Controllers
 
             _db.ReliefProjects.Add(project);
             await _db.SaveChangesAsync();
+
+            var employeeEmail = user?.Email ?? "unknown employee";
+            await _azureFunctionClient.NotifyEmployeeUpdateAsync(project, employeeEmail, HttpContext.RequestAborted);
 
             return RedirectToAction(nameof(Dashboard));
         }

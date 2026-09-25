@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+	<clear />
+	<add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+	<!-- Replace placeholders with your Azure DevOps organization, project, and feed. -->
+	<add key="GiftOfTheGiversAzureArtifacts" value="https://pkgs.dev.azure.com/&lt;organization&gt;/&lt;project&gt;/_packaging/&lt;feed&gt;/nuget/v3/index.json" />
+  </packageSources>
+  <packageSourceMapping>
+	<packageSource key="nuget.org">
+	  <package pattern="*" />
+	</packageSource>
+	<packageSource key="GiftOfTheGiversAzureArtifacts">
+	  <package pattern="GiftOfTheGivers.*" />
+	</packageSource>
+  </packageSourceMapping>
+  <!-- Configure credentials with Azure Artifacts Credential Provider or a secure pipeline service connection. -->
+</configuration>

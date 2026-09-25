@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -17,10 +17,27 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="QuestPDF" Version="2024.10.3" />
+    <PackageReference Include="Tamp.AzureFunctionsCoreTools.V4" Version="0.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="GiftOfTheGivers.Tests\" />
+    <None Include="GiftOfTheGivers.Helpers\GiftOfTheGivers.Helpers.csproj" />
+    <None Include="GiftOfTheGivers.Tests\GiftOfTheGivers.Tests.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="GiftOfTheGivers.Helpers\GiftOfTheGivers.Helpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="GiftOfTheGivers.Functions\**" />
+    <Compile Remove="GiftOfTheGivers.Helpers\**" />
+    <Compile Remove="GiftOfTheGivers.Tests\**" />
+    <Content Remove="GiftOfTheGivers.Functions\**" />
+    <Content Remove="GiftOfTheGivers.Helpers\**" />
+    <Content Remove="GiftOfTheGivers.Tests\**" />
+    <None Remove="GiftOfTheGivers.Functions\**" />
+    <None Remove="GiftOfTheGivers.Helpers\**" />
+    <None Remove="GiftOfTheGivers.Tests\**" />
   </ItemGroup>
 
 </Project>

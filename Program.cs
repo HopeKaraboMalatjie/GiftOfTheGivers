@@ -1,5 +1,6 @@
 using GiftOfTheGivers.Data;
 using GiftOfTheGivers.Models;
+using GiftOfTheGivers.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
@@ -13,6 +14,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.Configure<AzureFunctionsOptions>(builder.Configuration.GetSection("AzureFunctions"));
+builder.Services.AddHttpClient<IAzureFunctionClient, AzureFunctionClient>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {

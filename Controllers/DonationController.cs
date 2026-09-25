@@ -1,5 +1,7 @@
 using GiftOfTheGivers.Data;
+using GiftOfTheGivers.Helpers;
 using GiftOfTheGivers.Models;
+using GiftOfTheGivers.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +14,13 @@ namespace GiftOfTheGivers.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAzureFunctionClient _azureFunctionClient;
 
-        public DonationController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+        public DonationController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAzureFunctionClient azureFunctionClient)
         {
             _db = db;
             _userManager = userManager;
+            _azureFunctionClient = azureFunctionClient;
         }
 
         // GET: /Donation/Create
@@ -82,6 +86,15 @@ namespace GiftOfTheGivers.Controllers
             if (donation is null) return NotFound();
 
             var donorName = donation.ApplicationUser?.FullName ?? donation.GuestName ?? "Anonymous Donor";
+            var certificateReference = DonationHelper.FormatCertificateReference(donation.DonationId, donation.DonatedOn);
+            var functionPdf = await _azureFunctionClient.GenerateDonationCertificateAsync(donation, donorName, certificateReference, HttpContext.RequestAborted);
+            if (functionPdf is not null)
+            {
+                return File(functionPdf, "application/pdf", $"{certificateReference}.pdf");
+            }
+
+            var total = DonationHelper.CalculateDonationTotal(new[] { donation.Amount });
+            var formattedAmount = DonationHelper.FormatDonationAmount(total, donation.Currency.ToString());
 
             var pdfBytes = Document.Create(container =>
             {
@@ -102,10 +115,10 @@ namespace GiftOfTheGivers.Controllers
                         col.Item().Text("This is a prototype-stage document. It is not a valid legal tax certificate.")
                             .Italic().FontColor(Colors.Grey.Darken1);
 
-                        col.Item().PaddingTop(15).Text($"Certificate Reference: GOTG-{donation.DonationId:D6}");
+                        col.Item().PaddingTop(15).Text($"Certificate Reference: {certificateReference}");
                         col.Item().Text($"Donor: {donorName}");
                         col.Item().Text($"Date: {donation.DonatedOn:dd MMMM yyyy}");
-                        col.Item().Text($"Amount: {donation.Amount:N2} {donation.Currency}");
+                        col.Item().Text($"Amount: {formattedAmount}");
                         col.Item().Text($"Frequency: {donation.Frequency}");
                         col.Item().Text($"Supporting Project: {(donation.ReliefProject != null ? donation.ReliefProject.Title : "General Fund")}");
 
