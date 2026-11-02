@@ -4,36 +4,46 @@
     ViewData["Title"] = "Log in";
 }
 
-<div class="container py-5" style="max-width:600px;">
-    <h2 class="section-title mb-4">Log in</h2>
+<div class="container account-container py-5">
+    <div class="account-card">
+        <aside class="account-aside" aria-label="About your donor account">
+            <span class="account-eyebrow">A little help goes a long way</span>
+            <h1>Welcome back, changemaker.</h1>
+            <p>Sign in to continue supporting communities and keep your giving close at hand.</p>
+            <div class="account-promise"><span aria-hidden="true">♡</span> Every act of kindness matters.</div>
+        </aside>
+        <section class="account-content" aria-labelledby="account-title">
+            <span class="account-kicker">Donor account</span>
+            <h2 id="account-title">Sign in</h2>
+            <p class="account-intro">Good to see you again. Enter your details below.</p>
 
-    <form method="post">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger account-validation" role="alert"></div>
 
-        <div class="mb-3">
-            <label asp-for="Input.Email" class="form-label">Email</label>
-            <input asp-for="Input.Email" class="form-control" />
-            <span asp-validation-for="Input.Email" class="text-danger"></span>
-        </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Email" class="form-label">Email address</label>
+                    <input asp-for="Input.Email" class="form-control account-input" autocomplete="username" autofocus />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
 
-        <div class="mb-3">
-            <label asp-for="Input.Password" class="form-label">Password</label>
-            <input asp-for="Input.Password" class="form-control" />
-            <span asp-validation-for="Input.Password" class="text-danger"></span>
-        </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Password" class="form-label">Password</label>
+                    <input asp-for="Input.Password" class="form-control account-input" autocomplete="current-password" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
 
-        <div class="mb-3 form-check">
-            <input asp-for="Input.RememberMe" class="form-check-input" />
-            <label asp-for="Input.RememberMe" class="form-check-label">Remember me?</label>
-        </div>
+                <div class="form-check account-remember mb-4">
+                    <input asp-for="Input.RememberMe" class="form-check-input" />
+                    <label asp-for="Input.RememberMe" class="form-check-label">Keep me signed in</label>
+                </div>
 
-        <button type="submit" class="btn btn-gotg-primary w-100">Log in</button>
+                <button type="submit" class="btn btn-gotg-primary account-submit">Sign in</button>
+            </form>
 
-        <div class="mt-3 text-center">
-            <p class="mb-0">Don't have an account? <a asp-area="Identity" asp-page="/Account/Register">Register</a></p>
-        </div>
-    </form>
+            <p class="account-switch">New to giving with us? <a asp-area="Identity" asp-page="/Account/Register" asp-route-returnUrl="@Model.ReturnUrl">Create an account</a></p>
+            <p class="account-guest">You can also <a asp-controller="Donation" asp-action="Create">make a donation as a guest</a>.</p>
+        </section>
+    </div>
 </div>
 
 @section Scripts {

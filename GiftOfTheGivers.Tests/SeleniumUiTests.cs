@@ -4,24 +4,31 @@ using Xunit;
 
 namespace GiftOfTheGivers.Tests;
 
-public sealed class SeleniumUiTests
+public sealed class SeleniumUiTests : IClassFixture<SeleniumWebAppFixture>
 {
-    [SiteConfiguredFact]
+    private readonly SeleniumWebAppFixture _fixture;
+
+    public SeleniumUiTests(SeleniumWebAppFixture fixture)
+    {
+        _fixture = fixture;
+    }
+
+    [Fact]
     public void LoginPageDisplaysSignInForm()
     {
         using var driver = CreateDriver();
-        driver.Navigate().GoToUrl(new Uri(new Uri(GetBaseUrl()), "/Identity/Account/Login"));
+        driver.Navigate().GoToUrl(new Uri(new Uri(_fixture.BaseUrl), "/Identity/Account/Login"));
 
         Assert.True(driver.FindElement(By.Id("Input_Email")).Displayed);
         Assert.True(driver.FindElement(By.Id("Input_Password")).Displayed);
         SaveScreenshot(driver, "login-page");
     }
 
-    [DonationWriteEnabledFact]
+    [Fact]
     public void AnonymousDonorCanSubmitDonation()
     {
         using var driver = CreateDriver();
-        driver.Navigate().GoToUrl(new Uri(new Uri(GetBaseUrl()), "/Donation/Create"));
+        driver.Navigate().GoToUrl(new Uri(new Uri(_fixture.BaseUrl), "/Donation/Create"));
 
         var amount = driver.FindElement(By.Name("Amount"));
         amount.Clear();
@@ -46,9 +53,6 @@ public sealed class SeleniumUiTests
         options.AddArgument("--window-size=1280,1200");
         return new ChromeDriver(options);
     }
-
-    private static string GetBaseUrl() =>
-        Environment.GetEnvironmentVariable("GOTG_TEST_BASE_URL")!.TrimEnd('/') + "/";
 
     private static void SaveScreenshot(IWebDriver driver, string name)
     {

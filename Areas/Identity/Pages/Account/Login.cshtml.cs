@@ -37,21 +37,23 @@ namespace GiftOfTheGivers.Areas.Identity.Pages.Account
 
         public void OnGet(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl ?? Url.Content("~");
+            ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? Url.Content("~") : returnUrl;
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl ?? Url.Content("~");
+            ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? Url.Content("~") : returnUrl;
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(Input.Email.Trim(), Input.Password, Input.RememberMe, lockoutOnFailure: true);
             if (result.Succeeded)
             {
-                return LocalRedirect(ReturnUrl);
+                return string.IsNullOrWhiteSpace(returnUrl)
+                    ? Redirect(Url.Content("~/"))
+                    : LocalRedirect(returnUrl);
             }
 
             if (result.IsLockedOut)

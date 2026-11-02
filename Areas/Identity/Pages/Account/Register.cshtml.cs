@@ -37,6 +37,7 @@ namespace GiftOfTheGivers.Areas.Identity.Pages.Account
             [DataType(DataType.Password)]
             public string Password { get; set; } = string.Empty;
 
+            [Required]
             [DataType(DataType.Password)]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             [Display(Name = "Confirm password")]
@@ -45,12 +46,12 @@ namespace GiftOfTheGivers.Areas.Identity.Pages.Account
 
         public void OnGet(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl;
+            ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? Url.Content("~") : returnUrl;
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl ?? Url.Content("~");
+            ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? Url.Content("~") : returnUrl;
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -58,24 +59,36 @@ namespace GiftOfTheGivers.Areas.Identity.Pages.Account
 
             var user = new ApplicationUser
             {
-                UserName = Input.Email,
-                Email = Input.Email,
-                FullName = Input.FullName,
+                UserName = Input.Email.Trim(),
+                Email = Input.Email.Trim(),
+                FullName = Input.FullName.Trim(),
                 EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, Input.Password);
             if (result.Succeeded)
             {
-                // Optionally add default role
-                if (await _userManager.IsInRoleAsync(user, "Donor") == false)
+                var roleResult = await _userManager.AddToRoleAsync(user, "Donor");
+                if (!roleResult.Succeeded)
                 {
-                    // If role exists, add. Swallow if role is missing.
-                    try { await _userManager.AddToRoleAsync(user, "Donor"); } catch { }
+                    var deleteResult = await _userManager.DeleteAsync(user);
+                    foreach (var error in roleResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    if (!deleteResult.Succeeded)
+                    {
+                        ModelState.AddModelError(string.Empty, "Your account was created, but donor access could not be assigned. Please contact support before trying again.");
+                    }
+
+                    return Page();
                 }
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                return LocalRedirect(ReturnUrl);
+                return string.IsNullOrWhiteSpace(returnUrl)
+                    ? Redirect(Url.Content("~/"))
+                    : LocalRedirect(returnUrl);
             }
 
             foreach (var error in result.Errors)

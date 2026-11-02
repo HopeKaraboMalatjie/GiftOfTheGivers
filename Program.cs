@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 QuestPDF.Settings.License = LicenseType.Community;
 
 var isTesting = builder.Environment.IsEnvironment("Testing");
+var useInMemoryDatabase = isTesting && builder.Configuration.GetValue<bool>("Testing:UseInMemoryDatabase");
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? (isTesting ? "Server=localhost;Database=GiftOfTheGiversTests;User Id=test;Password=test;" : null);
 
@@ -19,7 +20,17 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+{
+    if (useInMemoryDatabase)
+    {
+        var databaseName = builder.Configuration["Testing:DatabaseName"] ?? "GiftOfTheGiversTests";
+        options.UseInMemoryDatabase(databaseName);
+    }
+    else
+    {
+        options.UseSqlServer(connectionString);
+    }
+});
 
 builder.Services.Configure<AzureFunctionsOptions>(builder.Configuration.GetSection("AzureFunctions"));
 builder.Services.AddHttpClient<IAzureFunctionClient, AzureFunctionClient>();
@@ -39,7 +50,15 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-if (!isTesting)
+if (useInMemoryDatabase)
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<ApplicationDbContext>();
+    await db.Database.EnsureCreatedAsync();
+    await SeedData.InitializeAsync(services);
+}
+else if (!isTesting)
 {
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
