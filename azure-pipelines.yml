@@ -1,5 +1,5 @@
 trigger:
-- main
+- master
 
 pool:
   vmImage: windows-latest
@@ -10,6 +10,7 @@ variables:
   functionsProject: GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj
   helpersProject: GiftOfTheGivers.Helpers/GiftOfTheGivers.Helpers.csproj
   testProject: GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj
+  migrationScript: $(Build.ArtifactStagingDirectory)/database/migrations.sql
 
 steps:
 - checkout: self
@@ -20,6 +21,9 @@ steps:
   inputs:
     packageType: sdk
     version: 8.0.x
+
+- task: NuGetAuthenticate@1
+  displayName: Authenticate configured NuGet feeds
 
 - script: dotnet restore GiftOfTheGivers.sln
   displayName: Restore NuGet packages
@@ -36,6 +40,18 @@ steps:
   inputs:
     testResultsFormat: VSTest
     testResultsFiles: '$(Agent.TempDirectory)/test-results/*.trx'
+    testRunTitle: 'GiftOfTheGivers automated tests'
+
+- powershell: New-Item -ItemType Directory -Force -Path "$(Build.ArtifactStagingDirectory)/database" | Out-Null
+  displayName: Prepare migration artifact directory
+
+- script: dotnet tool install dotnet-ef --tool-path "$(Agent.TempDirectory)\dotnet-tools" --version 8.0.8
+  displayName: Install EF Core migration tool
+
+- script: >-
+    "$(Agent.TempDirectory)\dotnet-tools\dotnet-ef.exe" migrations script --idempotent
+    --project $(webProject) --startup-project $(webProject) --output "$(migrationScript)"
+  displayName: Generate idempotent Azure SQL migration script
 
 - script: dotnet publish $(webProject) --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/web
   displayName: Publish ASP.NET Core application
@@ -43,20 +59,84 @@ steps:
 - script: dotnet publish $(functionsProject) --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/functions
   displayName: Publish Azure Functions application
 
+- task: ArchiveFiles@2
+  displayName: Archive web deployment package
+  inputs:
+    rootFolderOrFile: $(Build.ArtifactStagingDirectory)/web
+    includeRootFolder: false
+    archiveType: zip
+    archiveFile: $(Build.ArtifactStagingDirectory)/web.zip
+    replaceExistingArchive: true
+
+- task: ArchiveFiles@2
+  displayName: Archive Functions deployment package
+  inputs:
+    rootFolderOrFile: $(Build.ArtifactStagingDirectory)/functions
+    includeRootFolder: false
+    archiveType: zip
+    archiveFile: $(Build.ArtifactStagingDirectory)/functions.zip
+    replaceExistingArchive: true
+
 - script: dotnet pack $(helpersProject) --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/packages
   displayName: Pack helper NuGet package
 
 - task: PublishBuildArtifacts@1
   displayName: Publish web artifact
   inputs:
-    pathToPublish: $(Build.ArtifactStagingDirectory)/web
+    pathToPublish: $(Build.ArtifactStagingDirectory)/web.zip
     artifactName: web
 
 - task: PublishBuildArtifacts@1
   displayName: Publish Functions artifact
   inputs:
-    pathToPublish: $(Build.ArtifactStagingDirectory)/functions
+    pathToPublish: $(Build.ArtifactStagingDirectory)/functions.zip
     artifactName: functions
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish SQL migration script and load-test profile
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)/database
+    artifactName: database-migrations
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish k6 load-test profile
+  inputs:
+    pathToPublish: load
+    artifactName: load-test
+
+- task: SqlAzureDacpacDeployment@1
+  displayName: Apply idempotent Azure SQL migrations
+  condition: and(succeeded(), ne(variables['AzureServiceConnection'], ''), ne(variables['SqlServerName'], ''), ne(variables['SqlDatabaseName'], ''), ne(variables['SqlUsername'], ''), ne(variables['SqlPassword'], ''))
+  inputs:
+    azureSubscription: $(AzureServiceConnection)
+    AuthenticationType: server
+    ServerName: $(SqlServerName)
+    DatabaseName: $(SqlDatabaseName)
+    SqlUsername: $(SqlUsername)
+    SqlPassword: $(SqlPassword)
+    deployType: SqlTask
+    SqlFile: $(migrationScript)
+    IpDetectionMethod: AutoDetect
+
+- task: AzureWebApp@1
+  displayName: Deploy ASP.NET Core app to Azure App Service
+  condition: and(succeeded(), ne(variables['AzureServiceConnection'], ''), ne(variables['WebAppName'], ''))
+  inputs:
+    azureSubscription: $(AzureServiceConnection)
+    appType: webAppLinux
+    appName: $(WebAppName)
+    package: $(Build.ArtifactStagingDirectory)/web.zip
+    runtimeStack: DOTNETCORE|8.0
+
+- task: AzureFunctionApp@2
+  displayName: Deploy Azure Functions app
+  condition: and(succeeded(), ne(variables['AzureServiceConnection'], ''), ne(variables['FunctionsAppName'], ''))
+  inputs:
+    azureSubscription: $(AzureServiceConnection)
+    appType: functionAppLinux
+    appName: $(FunctionsAppName)
+    package: $(Build.ArtifactStagingDirectory)/functions.zip
+    deploymentMethod: zipDeploy
 
 - task: PublishBuildArtifacts@1
   displayName: Publish helper package artifact

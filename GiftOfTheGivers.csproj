@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include=".github\copilot-instructions.md" />
     <None Include="GiftOfTheGivers.Helpers\GiftOfTheGivers.Helpers.csproj" />
     <None Include="GiftOfTheGivers.Tests\GiftOfTheGivers.Tests.csproj" />
   </ItemGroup>

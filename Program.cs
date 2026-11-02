@@ -9,8 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 QuestPDF.Settings.License = LicenseType.Community;
 
+var isTesting = builder.Environment.IsEnvironment("Testing");
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    ?? (isTesting ? "Server=localhost;Database=GiftOfTheGiversTests;User Id=test;Password=test;" : null);
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("Connection string 'DefaultConnection' must be configured outside the Testing environment.");
+}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -33,9 +39,9 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// Apply migrations and seed roles/demo data on startup (fine for a prototype)
-using (var scope = app.Services.CreateScope())
+if (!isTesting)
 {
+    using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var db = services.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
@@ -62,3 +68,7 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+public partial class Program
+{
+}

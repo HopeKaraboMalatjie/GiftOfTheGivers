@@ -1,18 +1,41 @@
-# Azure Pipelines
+# Azure Pipelines: Part 3 CI/CD
 
-`azure-pipelines.yml` triggers on pushes to `main` and uses a Microsoft-hosted Windows agent.
+`azure-pipelines.yml` runs on pushes to `master` using a Microsoft-hosted Windows agent. The CI steps restore and build the .NET 8 solution, run xUnit unit/integration tests, publish TRX results, generate an idempotent EF Core SQL migration script, package the web and Functions applications, and publish build artifacts. Selenium scenarios are skipped unless a test URL is configured; the donation-writing scenario also requires an explicit opt-in.
 
-## Create the pipeline
+## Create and run the pipeline
 
-1. Push this repository to Azure Repos.
-2. In Azure DevOps choose **Pipelines > New pipeline**.
-3. Select **Azure Repos Git**, select the repository, and choose **Existing Azure Pipelines YAML file**.
-4. Select `/azure-pipelines.yml`, review it, and run the pipeline.
-5. The pipeline installs .NET 8, restores the solution, builds it, runs the xUnit tests, publishes the MVC project and Functions project, packs the helper library, and publishes three build artifacts.
-6. Inspect the Restore, Build, Test, Publish, and Artifact tasks in the run summary. Test results are published as TRX results.
+1. In Azure DevOps, select **Pipelines > New pipeline**, choose this Azure Repos repository, and select the existing `/azure-pipelines.yml` file.
+2. Ensure the pipeline is authorized to use the repository and any Azure Artifacts feeds. `NuGetAuthenticate@1` runs before package restore/tool installation.
+3. Run the pipeline and inspect restore, build, test, migration-script generation, package, and artifact tasks. Test output is published as TRX results.
+4. A missing deployment variable causes its corresponding Azure task to be skipped. Configure a test/staging target before enabling deployment; do not point test writes or load tests at production.
 
-## Azure service connections and artifacts
+## Configure continuous deployment securely
 
-For deployment, add an Azure Resource Manager service connection and add deployment tasks after the published artifacts. Do not put credentials in YAML. For package publication, create an Azure Artifacts feed and define the secret/authorized variable `AzureArtifactsFeedUrl` as the feed's NuGet v3 endpoint. When that variable is non-empty, the final pipeline step publishes the helper package; otherwise package publication is skipped while the package artifact is still produced.
+Create an Azure Resource Manager service connection with least-privilege access to the target resources. In Azure DevOps, define these pipeline variables or place them in an authorized variable group:
 
-The pipeline has not been executed against an Azure DevOps account by this repository, so a live successful run is not claimed.
+| Variable | Value |
+|---|---|
+| `AzureServiceConnection` | Exact Azure Resource Manager service-connection name. |
+| `WebAppName` | Target Linux App Service name. The existing publish profile references `GiftOfTheGivers20260828193027`; verify that it is the intended target before using it. |
+| `FunctionsAppName` | Target Linux Function App name, configured for .NET 8 isolated worker. |
+| `SqlServerName` | Azure SQL server host name, for example `server-name.database.windows.net`. |
+| `SqlDatabaseName` | Target Azure SQL database name. |
+| `SqlUsername` | SQL deployment account name with only the required migration permissions. |
+| `SqlPassword` | SQL deployment password; mark this variable **secret**. |
+
+The SQL task runs the generated idempotent migration script before the web and Functions deployment tasks. Configure the App Service settings separately: `ConnectionStrings__DefaultConnection` (secret) and `AzureFunctions__BaseUrl`. Configure the Function App with `FUNCTIONS_WORKER_RUNTIME=dotnet-isolated`. Never put credentials in YAML, appsettings, commits, screenshots, or build logs. Rotate any credential that was previously committed; removing it from the current file does not erase it from Git history.
+
+The deployment tasks are configured for Linux App Service and Linux Function App. Confirm target OS/runtime compatibility, SQL firewall/network access, and deployment permissions before enabling them. The application also checks/applies EF migrations at startup; pipeline SQL application is ordered before the app deployment to avoid first-start schema changes.
+
+## Test and load-test execution
+
+- Run unit and HTTP integration tests with `dotnet test GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj`.
+- To enable the Selenium login-page test, set `GOTG_TEST_BASE_URL` to an isolated test site. For the donation-writing test, also set `GOTG_TEST_ALLOW_DONATION_WRITE=true`. Use a disposable database/site and Chrome; set `GOTG_UI_SCREENSHOT_DIR` to save PNG evidence.
+- Run the five-user load profile with `k6 run -e BASE_URL=https://your-test-site.example load/k6-smoke.js`. The profile performs read-only GET requests to the donation form for 30 seconds. Save actual k6 output; do not claim a result until it has run.
+- The application has only its existing initial EF migration. Part 3 adds migration deployment automation, not a new business-schema migration. Add and review a new EF migration when the data model changes.
+
+## Azure Artifacts
+
+For helper-package publication, create an Azure Artifacts feed and define `AzureArtifactsFeedUrl` as its NuGet v3 endpoint. When non-empty, the final pipeline step publishes the helper package; otherwise the package artifact is produced without feed publication.
+
+Pipeline configuration is prepared in the repository; an Azure DevOps run, live deployment, live-site response, database update, and screenshots are not claimed until actually performed. See `PART3-EVIDENCE-CHECKLIST.md` for evidence capture.
