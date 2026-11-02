@@ -23,11 +23,17 @@ public sealed class SeleniumUiTests
         using var driver = CreateDriver();
         driver.Navigate().GoToUrl(new Uri(new Uri(GetBaseUrl()), "/Donation/Create"));
 
-        driver.FindElement(By.Name("Amount")).SendKeys("10");
+        var amount = driver.FindElement(By.Name("Amount"));
+        amount.Clear();
+        amount.SendKeys("10");
         driver.FindElement(By.CssSelector("button[type='submit']")).Click();
 
-        var confirmation = driver.FindElement(By.CssSelector("main h2"));
-        Assert.Contains("Thank You for Your Donation", confirmation.Text);
+        var pageText = driver.FindElement(By.TagName("body")).Text;
+        var validationErrors = driver.FindElements(By.CssSelector(".field-validation-error"))
+            .Select(error => error.Text)
+            .Where(error => !string.IsNullOrWhiteSpace(error));
+        Assert.True(pageText.Contains("Thank You for Your Donation"),
+            $"Donation confirmation was not displayed. Validation errors: {string.Join(" | ", validationErrors)}");
         SaveScreenshot(driver, "anonymous-donation-confirmation");
     }
 
@@ -37,6 +43,7 @@ public sealed class SeleniumUiTests
         options.AddArgument("--headless=new");
         options.AddArgument("--no-sandbox");
         options.AddArgument("--disable-dev-shm-usage");
+        options.AddArgument("--window-size=1280,1200");
         return new ChromeDriver(options);
     }
 

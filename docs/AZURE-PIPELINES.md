@@ -7,15 +7,16 @@
 1. In Azure DevOps, select **Pipelines > New pipeline**, choose this Azure Repos repository, and select the existing `/azure-pipelines.yml` file.
 2. Ensure the pipeline is authorized to use the repository and any Azure Artifacts feeds. `NuGetAuthenticate@1` runs before package restore/tool installation.
 3. Run the pipeline and inspect restore, build, test, migration-script generation, package, and artifact tasks. Test output is published as TRX results.
-4. A missing deployment variable causes its corresponding Azure task to be skipped. Configure a test/staging target before enabling deployment; do not point test writes or load tests at production.
+4. The `azureServiceConnection` parameter defaults to empty, so deployment tasks are omitted and CI can run without an Azure endpoint. Configure a test/staging target before enabling deployment; do not point test writes or load tests at production.
 
 ## Configure continuous deployment securely
 
-Create an Azure Resource Manager service connection with least-privilege access to the target resources. In Azure DevOps, define these pipeline variables or place them in an authorized variable group:
+Create an Azure Resource Manager service connection with least-privilege access to the target resources and authorize it for this pipeline. Azure DevOps service-connection inputs must be resolved at compile time, so use the `azureServiceConnection` YAML parameter rather than a runtime variable. Until the connection exists, leave its default empty; the deployment steps will be omitted. To deploy, enter the exact service-connection name as the parameter when manually running the pipeline, or set the YAML parameter default to that name to enable automatic deployment on `master`.
+
+Define the remaining values as pipeline variables or place them in an authorized variable group:
 
 | Variable | Value |
 |---|---|
-| `AzureServiceConnection` | Exact Azure Resource Manager service-connection name. |
 | `WebAppName` | Target Linux App Service name. The existing publish profile references `GiftOfTheGivers20260828193027`; verify that it is the intended target before using it. |
 | `FunctionsAppName` | Target Linux Function App name, configured for .NET 8 isolated worker. |
 | `SqlServerName` | Azure SQL server host name, for example `server-name.database.windows.net`. |

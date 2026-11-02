@@ -1,3 +1,8 @@
+parameters:
+- name: azureServiceConnection
+  type: string
+  default: ''
+
 trigger:
 - master
 
@@ -104,39 +109,40 @@ steps:
     pathToPublish: load
     artifactName: load-test
 
-- task: SqlAzureDacpacDeployment@1
-  displayName: Apply idempotent Azure SQL migrations
-  condition: and(succeeded(), ne(variables['AzureServiceConnection'], ''), ne(variables['SqlServerName'], ''), ne(variables['SqlDatabaseName'], ''), ne(variables['SqlUsername'], ''), ne(variables['SqlPassword'], ''))
-  inputs:
-    azureSubscription: $(AzureServiceConnection)
-    AuthenticationType: server
-    ServerName: $(SqlServerName)
-    DatabaseName: $(SqlDatabaseName)
-    SqlUsername: $(SqlUsername)
-    SqlPassword: $(SqlPassword)
-    deployType: SqlTask
-    SqlFile: $(migrationScript)
-    IpDetectionMethod: AutoDetect
+- ${{ if ne(parameters.azureServiceConnection, '') }}:
+  - task: SqlAzureDacpacDeployment@1
+    displayName: Apply idempotent Azure SQL migrations
+    condition: and(succeeded(), ne(variables['SqlServerName'], ''), ne(variables['SqlDatabaseName'], ''), ne(variables['SqlUsername'], ''), ne(variables['SqlPassword'], ''))
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      AuthenticationType: server
+      ServerName: $(SqlServerName)
+      DatabaseName: $(SqlDatabaseName)
+      SqlUsername: $(SqlUsername)
+      SqlPassword: $(SqlPassword)
+      deployType: SqlTask
+      SqlFile: $(migrationScript)
+      IpDetectionMethod: AutoDetect
 
-- task: AzureWebApp@1
-  displayName: Deploy ASP.NET Core app to Azure App Service
-  condition: and(succeeded(), ne(variables['AzureServiceConnection'], ''), ne(variables['WebAppName'], ''))
-  inputs:
-    azureSubscription: $(AzureServiceConnection)
-    appType: webAppLinux
-    appName: $(WebAppName)
-    package: $(Build.ArtifactStagingDirectory)/web.zip
-    runtimeStack: DOTNETCORE|8.0
+  - task: AzureWebApp@1
+    displayName: Deploy ASP.NET Core app to Azure App Service
+    condition: and(succeeded(), ne(variables['WebAppName'], ''))
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      appType: webAppLinux
+      appName: $(WebAppName)
+      package: $(Build.ArtifactStagingDirectory)/web.zip
+      runtimeStack: DOTNETCORE|8.0
 
-- task: AzureFunctionApp@2
-  displayName: Deploy Azure Functions app
-  condition: and(succeeded(), ne(variables['AzureServiceConnection'], ''), ne(variables['FunctionsAppName'], ''))
-  inputs:
-    azureSubscription: $(AzureServiceConnection)
-    appType: functionAppLinux
-    appName: $(FunctionsAppName)
-    package: $(Build.ArtifactStagingDirectory)/functions.zip
-    deploymentMethod: zipDeploy
+  - task: AzureFunctionApp@2
+    displayName: Deploy Azure Functions app
+    condition: and(succeeded(), ne(variables['FunctionsAppName'], ''))
+    inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      appType: functionAppLinux
+      appName: $(FunctionsAppName)
+      package: $(Build.ArtifactStagingDirectory)/functions.zip
+      deploymentMethod: zipDeploy
 
 - task: PublishBuildArtifacts@1
   displayName: Publish helper package artifact
